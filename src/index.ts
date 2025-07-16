@@ -13,6 +13,44 @@
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
+		if (request.method === 'POST') {
+			try {
+				const contentType = request.headers.get('Content-Type');
+
+				if (contentType !== 'application/json') {
+					return new Response('Unsupported Content-Type', { status: 400 });
+				}
+
+				const body: { audioUrl: string } = await request.json();
+
+				console.log(body);
+
+				const audioUrl = body.audioUrl;
+
+				if (!audioUrl) {
+					return new Response("Missing 'audioUrl' in request body", { status: 400 });
+				}
+
+				const audioResponse = await fetch(audioUrl);
+
+				if (!audioResponse.ok) {
+					return new Response('Failed to fetch audio', { status: 502 });
+				}
+
+				const audioBlob = await audioResponse.arrayBuffer();
+
+				const inputs = {
+					audio: [...new Uint8Array(audioBlob)],
+				};
+
+				const response = await env.AI.run('@cf/openai/whisper', inputs);
+
+				return Response.json({ text: response.text });
+			} catch (error) {
+				console.log(error);
+				return new Response('Internal Server Error', { status: 500 });
+			}
+		}
+		return new Response('Only POST requests are allowed', { status: 405 });
 	},
 } satisfies ExportedHandler<Env>;
