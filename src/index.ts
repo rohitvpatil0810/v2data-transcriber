@@ -64,6 +64,12 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		if (request.method === 'POST') {
 			try {
+				// require API Key to access
+				const apiKey = request.headers.get('X-API-Key');
+				if (!apiKey || apiKey !== env.SECRET_API_KEY) {
+					return new Response('Unauthorized', { status: 401 });
+				}
+
 				const contentType = request.headers.get('Content-Type');
 
 				if (contentType !== 'application/json') {
