@@ -26,13 +26,13 @@
 
 	"ai": {
 		"binding": "AI"
-	},
+	}
 
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	"vars": { "SECRET_API_KEY": "production_value" }
+	// "vars": { "SECRET_API_KEY": process.env.SECRET_API_KEY },
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
