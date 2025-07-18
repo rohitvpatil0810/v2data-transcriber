@@ -67,7 +67,7 @@ export default {
 				// require API Key to access
 				const apiKey = request.headers.get('X-API-Key');
 				if (!apiKey || apiKey !== env.SECRET_API_KEY) {
-					return new Response('Unauthorized', { status: 401 });
+					return new Response('Unauthorized Access', { status: 401 });
 				}
 
 				const contentType = request.headers.get('Content-Type');
